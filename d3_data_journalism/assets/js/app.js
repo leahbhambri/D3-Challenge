@@ -28,7 +28,7 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
     // ==============================
     censusData.forEach(function(data) {
       data.healthcare = +data.healthcare;
-      data.poverty = +data.poverty;
+      data.poverty = +data.poverty
     });
 
     // Step 2: Create scale functions
@@ -67,18 +67,35 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
     .attr("r", "10")
     .attr("fill", "blue")
     .attr("opacity", ".5")
-    .append("text")
-    .attr("r", 0)
-    .attr("text-anchor", "middle")
+    .attr("class", "stateCircle")
+    // .append("text")
+    // .attr("r", 0)
+    // .attr("text-anchor", "middle")
     .text(function(d) { return d.abbr; } ); 
     console.log(censusData[0])
 
+    var stateAbbr = chartGroup.selectAll(null)
+    .data(censusData)
+    .enter().append("text");
+
+    stateAbbr
+    .attr("x", function (d) {
+      return xLinearScale(d.poverty);
+    })
+    .attr("y", function (d) {
+      return yLinearScale(d.healthcare) + 4
+    })
+    .text(function (d) {
+      return d.abbr;
+    })
+    .attr("class", "stateText")
+    .attr("font-size", "9px");
 
 
     // Step 6: Initialize tool tip
     // ==============================
     var toolTip = d3.tip()
-      .attr("class", "tooltip")
+      .attr("class", "d3-tip")
       .offset([80, -60])
       .html(function(d) {
         return (`${d.abbr}<br>Healthcare: ${d.healthcare}<br>Poverty: ${d.poverty}`);
@@ -90,7 +107,7 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
 
     // Step 8: Create event listeners to display and hide the tooltip
     // ==============================
-    circlesGroup.on("click", function(data) {
+    circlesGroup.on("mouseover", function(data) {
       toolTip.show(data, this);
     })
       // onmouseout event
